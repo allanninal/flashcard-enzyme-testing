@@ -1,17 +1,34 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
+import {createStore} from 'redux';
+import {BrowserRouter, Switch, Route} from "react-router-dom";
+import {Provider} from "react-redux";
+import rootReducer from './reducers';
+import App from "./components/App";
+import Stack from "./components/Stack";
+import StackForm from "./components/StackForm";
+import {setStack} from "./actions";
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const store = createStore(rootReducer);
+store.subscribe(() => {
+    console.log( 'store', store.getState() );
+});
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+store.dispatch(setStack({
+    id: 0,
+    title: 'example',
+    cards: []
+}));
+
+ReactDOM.render(
+    <Provider store={store}>
+        <BrowserRouter>
+            <Switch>
+                <Route exact path="/" component={App}/>
+                <Route exact path="/stack" component={Stack}/>
+                <Route exact path="/stack_form" component={StackForm}/>
+            </Switch>
+        </BrowserRouter>
+    </Provider>,
+    document.getElementById('root'));
